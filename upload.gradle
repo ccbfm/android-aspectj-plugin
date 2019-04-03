@@ -1,0 +1,16 @@
+apply plugin: 'maven'
+
+repositories {
+    mavenCentral()
+}
+
+version = '1.0.0'
+
+//上传本地库
+uploadArchives{
+    repositories{
+        mavenDeployer{
+            repository(url: uri('../repo'))
+        }
+    }
+}

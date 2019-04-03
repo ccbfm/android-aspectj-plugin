@@ -1,7 +1,7 @@
 apply plugin: 'groovy'
 apply plugin: 'com.github.dcendents.android-maven'
 
-group='com.github.ccbfm'
+group = 'com.github.ccbfm'
 
 targetCompatibility = JavaVersion.VERSION_1_8
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -14,7 +14,11 @@ dependencies {
 
     compile gradleApi()
     compile localGroovy()
-    compile 'com.android.tools.build:gradle:3.1.2'
+    compile 'com.android.tools.build:gradle:3.3.2'
     compile 'org.aspectj:aspectjtools:1.8.9'
     compile 'org.aspectj:aspectjrt:1.8.9'
 }
+
+//与插件apply plugin: 'com.github.dcendents.android-maven' 冲突 需注释掉在使用
+//apply form: 'upload.gradle'
+

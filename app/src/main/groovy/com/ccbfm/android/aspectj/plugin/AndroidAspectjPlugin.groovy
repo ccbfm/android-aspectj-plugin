@@ -7,8 +7,21 @@ import org.aspectj.bridge.MessageHandler
 import org.aspectj.tools.ajc.Main
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.tasks.compile.JavaCompile
 
+
+/**
+ * org.gradle.api.tasks.TaskProvider
+ * org.gradle.api.tasks.compile.JavaCompile
+ *
+ * javaCompileProvider 返回一个  TaskProvider
+ *
+ * javaCompile 返回一个 JavaCompile
+ */
+
+/**
+ * @author ccbfm
+ *
+ */
 class AndroidAspectjPlugin implements Plugin<Project> {
 
     @Override
@@ -43,37 +56,38 @@ class AndroidAspectjPlugin implements Plugin<Project> {
 
         variants.all { variant ->
 
-            JavaCompile javaCompile = variant.javaCompile
-            javaCompile.doLast {
-                String[] args = [
-                        "-showWeaveInfo",
-                        "-1.8",
-                        "-inpath", javaCompile.destinationDir.toString(),
-                        "-aspectpath", javaCompile.classpath.asPath,
-                        "-d", javaCompile.destinationDir.toString(),
-                        "-classpath", javaCompile.classpath.asPath,
-                        "-bootclasspath", project.android.bootClasspath.join(File.pathSeparator)
-                ]
+            variant.javaCompileProvider.configure {
+                it.doLast {
+                    String[] args = [
+                            "-showWeaveInfo",
+                            "-1.8",
+                            "-inpath", destinationDir.toString(),
+                            "-aspectpath", classpath.asPath,
+                            "-d", destinationDir.toString(),
+                            "-classpath", classpath.asPath,
+                            "-bootclasspath", project.android.bootClasspath.join(File.pathSeparator)
+                    ]
 
-                log.debug "ajc args: " + Arrays.toString(args)
+                    log.debug "ajc args: " + Arrays.toString(args)
 
-                MessageHandler handler = new MessageHandler(true)
-                new Main().run(args, handler)
+                    MessageHandler handler = new MessageHandler(true)
+                    new Main().run(args, handler)
 
-                for (IMessage message : handler.getMessages(null, true)) {
-                    switch (message.getKind()) {
-                        case IMessage.ABORT:
-                        case IMessage.ERROR:
-                        case IMessage.FAIL:
-                            log.error message.message, message.thrown
-                            break
-                        case IMessage.WARNING:
-                        case IMessage.INFO:
-                            log.info message.message, message.thrown
-                            break
-                        case IMessage.DEBUG:
-                            log.debug message.message, message.thrown
-                            break
+                    for (IMessage message : handler.getMessages(null, true)) {
+                        switch (message.getKind()) {
+                            case IMessage.ABORT:
+                            case IMessage.ERROR:
+                            case IMessage.FAIL:
+                                log.error message.message, message.thrown
+                                break
+                            case IMessage.WARNING:
+                            case IMessage.INFO:
+                                log.info message.message, message.thrown
+                                break
+                            case IMessage.DEBUG:
+                                log.debug message.message, message.thrown
+                                break
+                        }
                     }
                 }
             }
